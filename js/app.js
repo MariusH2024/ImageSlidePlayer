@@ -1,3 +1,20 @@
+const folderButton =
+    document.getElementById(
+        "folderButton"
+    );
+
+
+const imagesInput =
+    document.getElementById(
+        "images"
+    );
+
+
+const imagesButton =
+    document.getElementById(
+        "imagesButton"
+    );
+
 const folder=document.getElementById("folder");
 const folderName=document.getElementById("folderName");
 const duration=document.getElementById("duration");
@@ -10,30 +27,21 @@ const settings=Storage.loadSettings();
 duration.value=settings.duration;
 transition.value=settings.transition;
 
-folder.onchange=()=>{
-  images=[...folder.files].filter(file=>file.type.startsWith("image/"));
-  images.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:"base"}));
 
-  if(!images.length){
-    folderName.textContent="Aucune image valide";
-    previewImage.style.display="none";
-    stats.textContent="";
-    start.disabled=true;
-    return;
-  }
+folder.onchange = () => {
 
-  const firstPath=images[0].webkitRelativePath || images[0].name;
-  const folderLabel=firstPath.includes("/")?firstPath.split("/")[0]:"Dossier sélectionné";
+    processImages(
+        folder.files
+    );
 
-  folderName.textContent=`${folderLabel} — ${images.length} image(s)`;
-  previewImage.src=URL.createObjectURL(images[0]);
-  previewImage.style.display="block";
+};
 
-  const totalBytes=images.reduce((sum,file)=>sum+file.size,0);
-  const formats=[...new Set(images.map(file=>file.name.split(".").pop().toUpperCase()))];
+imagesInput.onchange = () => {
 
-  stats.innerHTML=`${images.length} image(s) • ${(totalBytes/1024/1024).toFixed(1)} Mo<br>${formats.join(" • ")}`;
-  start.disabled=false;
+    processImages(
+        imagesInput.files
+    );
+
 };
 
 duration.onchange = () => {
@@ -105,3 +113,157 @@ if ("serviceWorker" in navigator) {
     );
 
 }
+
+folderButton.onclick = () => {
+
+    folder.click();
+
+};
+imagesButton.onclick = () => {
+
+    imagesInput.click();
+
+};
+
+function processImages(
+    selectedImages
+) {
+
+    images =
+        [...selectedImages]
+        .filter(
+            file =>
+                file.type.startsWith(
+                    "image/"
+                )
+        );
+
+
+    images.sort(
+        (a, b) =>
+            a.name.localeCompare(
+                b.name,
+                undefined,
+                {
+                    numeric: true,
+                    sensitivity: "base"
+                }
+            )
+    );
+
+
+    if (!images.length) {
+
+        folderName.textContent =
+            "Aucune image sélectionnée";
+
+        previewImage.style.display =
+            "none";
+
+        stats.textContent = "";
+
+        start.disabled = true;
+
+        return;
+
+    }
+
+
+    /*
+     * Nom du dossier
+     */
+
+    const firstPath =
+        images[0].webkitRelativePath
+        || images[0].name;
+
+
+    const folderLabel =
+        firstPath.includes("/")
+        ? firstPath.split("/")[0]
+        : "Images sélectionnées";
+
+
+    folderName.textContent =
+        `${folderLabel} — ${images.length} image(s)`;
+
+
+    /*
+     * Aperçu
+     */
+
+    previewImage.src =
+        URL.createObjectURL(
+            images[0]
+        );
+
+
+    previewImage.style.display =
+        "block";
+
+
+    /*
+     * Statistiques
+     */
+
+    const totalBytes =
+        images.reduce(
+            (sum, file) =>
+                sum + file.size,
+            0
+        );
+
+
+    const formats =
+        [
+            ...new Set(
+                images.map(
+                    file =>
+                        file.name
+                            .split(".")
+                            .pop()
+                            .toUpperCase()
+                )
+            )
+        ];
+
+
+    stats.innerHTML =
+        `${images.length} image(s)
+        • ${(totalBytes / 1024 / 1024).toFixed(1)} Mo
+        <br>
+        ${formats.join(" • ")}`;
+
+
+    start.disabled = false;
+
+}
+
+
+const clearImages =
+    document.getElementById(
+        "clearImages"
+    );
+
+
+clearImages.onclick = () => {
+
+    images = [];
+
+    folder.value = "";
+
+    imagesInput.value = "";
+
+    previewImage.src = "";
+
+    previewImage.style.display =
+        "none";
+
+    folderName.textContent =
+        "Aucune image sélectionnée";
+
+    stats.textContent = "";
+
+    start.disabled = true;
+
+};

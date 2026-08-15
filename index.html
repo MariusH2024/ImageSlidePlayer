@@ -22,7 +22,51 @@
       <h1>ImageSlide Player</h1>
       <p>Créer des diaporamas animés</p>
 
-      <label class="form-label">Choisir un dossier</label>
+      <div class="file-selection">
+
+    <label class="form-label">
+        📁 Dossier d'images
+    </label>
+
+    <input
+        id="folder"
+        type="file"
+        webkitdirectory
+        directory
+        multiple
+        hidden>
+
+    <button
+        type="button"
+        id="folderButton"
+        class="file-button">
+
+        📁 Choisir un dossier
+
+    </button>
+
+
+    <label class="form-label mt-3">
+        🖼️ Images
+    </label>
+
+    <input
+        id="images"
+        type="file"
+        accept="image/*"
+        multiple
+        hidden>
+
+    <button
+        type="button"
+        id="imagesButton"
+        class="file-button">
+
+        🖼️ Choisir des images
+
+    </button>
+
+</div>
       <input id="folder" type="file" webkitdirectory multiple class="form-control">
 
       <div id="folderName" class="folder-name">Aucun dossier sélectionné</div>
@@ -125,6 +169,14 @@
 
             <button id="fullscreenBtn">
                 ⛶
+            </button>
+            <button
+                id="clearImages"
+                class="clear-button"
+                type="button">
+
+                ✕ Réinitialiser
+
             </button>
 
         </div>
